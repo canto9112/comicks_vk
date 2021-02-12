@@ -63,7 +63,24 @@ def upload_image_in_wall(hash, photo, server, group_id, token, api_version):
     response = requests.post('https://api.vk.com/method/photos.saveWallPhoto',
                              params=params)
     response.raise_for_status()
-    pprint(response.json())
+    response_json = response.json()
+    id_image = response_json['response'][0]['id']
+    owner_id = response_json['response'][0]['owner_id']
+    return id_image, owner_id
+
+
+def public_image_wall_vk(token, api_version, from_group, message):
+    params = {
+        'access_token': token,
+        'v': api_version,
+        'owner_id': -int(from_group),
+        # 'attachments': (owner_id, media_id),
+        'message': message
+    }
+    response = requests.post('https://api.vk.com/method/wall.post',
+                             params=params)
+    response.raise_for_status()
+    response_json = response.json()
 
 
 if __name__ == '__main__':
@@ -83,4 +100,7 @@ if __name__ == '__main__':
     upload_url = get_upload_url(token_vk, vk_api_version, group_id_vk)
 
     hash, photo, server = upload_image_to_server_vk(upload_url, image_name)
-    upload_image_in_wall(hash, photo, server, group_id_vk, token_vk, vk_api_version)
+    media_id, owner_id = upload_image_in_wall(hash, photo, server, group_id_vk, token_vk, vk_api_version)
+    print(media_id, owner_id)
+    print(-int(group_id_vk))
+    public_image_wall_vk(token_vk, vk_api_version, group_id_vk, author_comment)
