@@ -37,7 +37,7 @@ def get_upload_url(url, token, api_version, group_id):
 
 
 def upload_image(url, image_name):
-    with open(image_name, 'rb') as file:
+    with open(f'{image_name}.png', 'rb') as file:
         files = {
             'photo': file
         }
@@ -57,9 +57,9 @@ if __name__ == '__main__':
     user_id_vk = os.getenv('USER_ID_VK')
     group_id_vk = os.getenv('GROUP_ID_VK')
 
-    # image_link, image_name, author_comment = get_image_link(xkdc_url)
-    # print(author_comment)
-    # save_image(image_link, image_name)
+    image_link, image_name, author_comment = get_image_link(xkdc_url)
+    print(author_comment)
+    save_image(image_link, image_name)
     upload_url = get_upload_url(api_vk_url, token_vk, vk_api_version, group_id_vk)
-    print(upload_url)
-    upload_image(upload_url, '353.png')
+
+    upload_image(upload_url, image_name)
