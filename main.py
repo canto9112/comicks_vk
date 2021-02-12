@@ -23,11 +23,10 @@ def save_image(url, file_name):
         file.write(response.content)
 
 
-def get_group_vk(url, token, api_version, user_id):
+def get_group_vk(url, token, api_version):
     params = {
         'access_token': token,
         'v': api_version,
-        'user_id': user_id
     }
     response = requests.get(url, params=params)
     response.raise_for_status()
@@ -48,4 +47,4 @@ if __name__ == '__main__':
     # image_link, image_name, author_comment = get_image_link(xkdc_url)
     # print(author_comment)
     # save_image(image_link, image_name)
-    get_group_vk(api_vk_url, token_vk, vk_api_version, user_id_vk)
+    get_group_vk(api_vk_url, token_vk, vk_api_version)
