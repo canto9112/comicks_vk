@@ -23,27 +23,47 @@ def save_image(url, file_name):
         file.write(response.content)
 
 
-def get_upload_url(url, token, api_version, group_id):
+def get_upload_url(token, api_version, group_id):
     params = {
         'access_token': token,
         'v': api_version,
         'group_id': group_id
     }
-    response = requests.get(url, params=params)
+    response = requests.get('https://api.vk.com/method/photos.getWallUploadServer',
+                            params=params)
     response.raise_for_status()
     response_json = response.json()
     upload_url = response_json['response']['upload_url']
     return upload_url
 
 
-def upload_image(url, image_name):
+def upload_image_to_server_vk(url, image_name):
     with open(f'{image_name}.png', 'rb') as file:
         files = {
             'photo': file
         }
         response = requests.post(url, files=files)
         response.raise_for_status()
-        pprint(response.json())
+        response_json = response.json()
+        hash = response_json['hash']
+        photo = response_json['photo']
+        server = response_json['server']
+        return hash, photo, server
+
+
+def upload_image_in_wall(hash, photo, server, group_id, token, api_version):
+    params = {
+        'access_token': token,
+        'v': api_version,
+        'group_id': group_id,
+        'photo': photo,
+        'server': server,
+        'hash': hash
+    }
+    response = requests.post('https://api.vk.com/method/photos.saveWallPhoto',
+                             params=params)
+    response.raise_for_status()
+    pprint(response.json())
 
 
 if __name__ == '__main__':
@@ -60,6 +80,7 @@ if __name__ == '__main__':
     image_link, image_name, author_comment = get_image_link(xkdc_url)
     print(author_comment)
     save_image(image_link, image_name)
-    upload_url = get_upload_url(api_vk_url, token_vk, vk_api_version, group_id_vk)
+    upload_url = get_upload_url(token_vk, vk_api_version, group_id_vk)
 
-    upload_image(upload_url, image_name)
+    hash, photo, server = upload_image_to_server_vk(upload_url, image_name)
+    upload_image_in_wall(hash, photo, server, group_id_vk, token_vk, vk_api_version)
