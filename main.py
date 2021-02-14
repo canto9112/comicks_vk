@@ -95,7 +95,7 @@ def public_image_wall_vk(token, api_version, from_group, message, media_id, owne
 
 if __name__ == '__main__':
     load_dotenv()
-    xkdc_last_url = 'http://xkcd.com/info.0.json'
+    xkdc_last_comics_url = 'http://xkcd.com/info.0.json'
     api_vk_url = 'https://api.vk.com/method/photos.getWallUploadServer'
 
     vk_api_version = 5.21
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     user_id_vk = os.getenv('USER_ID_VK')
     group_id_vk = os.getenv('GROUP_ID_VK')
 
-    last_comics_num = get_last_comics(xkdc_last_url)
+    last_comics_num = get_last_comics(xkdc_last_comics_url)
     random_comics = random.randint(1, last_comics_num)
     xkdc_url = f'http://xkcd.com/{random_comics}/info.0.json'
 
@@ -117,4 +117,4 @@ if __name__ == '__main__':
     media_id, owner_id = upload_image_in_wall(hash, photo, server, group_id_vk, token_vk, vk_api_version)
 
     public_image_wall_vk(token_vk, vk_api_version, group_id_vk, author_comment, media_id, owner_id)
-    delete_image = os.remove(f'{image_name}.png')
+    os.remove(f'{image_name}.png')
