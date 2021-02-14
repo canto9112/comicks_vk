@@ -110,9 +110,11 @@ if __name__ == '__main__':
     image_link, image_name, author_comment = get_image_link(xkdc_url)
     print(author_comment)
     save_image(image_link, image_name)
+    print(image_name)
     upload_url = get_upload_url(token_vk, vk_api_version, group_id_vk)
 
     hash, photo, server = upload_image_to_server_vk(upload_url, image_name)
     media_id, owner_id = upload_image_in_wall(hash, photo, server, group_id_vk, token_vk, vk_api_version)
 
     public_image_wall_vk(token_vk, vk_api_version, group_id_vk, author_comment, media_id, owner_id)
+    delete_image = os.remove(f'{image_name}.png')
