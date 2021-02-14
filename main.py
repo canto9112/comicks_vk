@@ -10,8 +10,8 @@ def get_last_comics(url):
     response.raise_for_status()
     response_json = response.json()
 
-    num = response_json['num']
-    return num
+    last_comics_num = response_json['num']
+    return last_comics_num
 
 
 def get_image_link(url):
@@ -96,7 +96,6 @@ def public_image_wall_vk(token, api_version, from_group, message, media_id, owne
 if __name__ == '__main__':
     load_dotenv()
     xkdc_last_url = 'http://xkcd.com/info.0.json'
-    xkdc_url = 'http://xkcd.com/353/info.0.json'
     api_vk_url = 'https://api.vk.com/method/photos.getWallUploadServer'
 
     vk_api_version = 5.21
@@ -104,13 +103,16 @@ if __name__ == '__main__':
     user_id_vk = os.getenv('USER_ID_VK')
     group_id_vk = os.getenv('GROUP_ID_VK')
 
-    get_last_comics(xkdc_last_url)
-    # image_link, image_name, author_comment = get_image_link(xkdc_url)
-    # print(author_comment)
-    # save_image(image_link, image_name)
-    # upload_url = get_upload_url(token_vk, vk_api_version, group_id_vk)
-    #
-    # hash, photo, server = upload_image_to_server_vk(upload_url, image_name)
-    # media_id, owner_id = upload_image_in_wall(hash, photo, server, group_id_vk, token_vk, vk_api_version)
-    #
-    # public_image_wall_vk(token_vk, vk_api_version, group_id_vk, author_comment, media_id, owner_id)
+    last_comics_num = get_last_comics(xkdc_last_url)
+    random_comics = random.randint(1, last_comics_num)
+    xkdc_url = f'http://xkcd.com/{random_comics}/info.0.json'
+
+    image_link, image_name, author_comment = get_image_link(xkdc_url)
+    print(author_comment)
+    save_image(image_link, image_name)
+    upload_url = get_upload_url(token_vk, vk_api_version, group_id_vk)
+
+    hash, photo, server = upload_image_to_server_vk(upload_url, image_name)
+    media_id, owner_id = upload_image_in_wall(hash, photo, server, group_id_vk, token_vk, vk_api_version)
+
+    public_image_wall_vk(token_vk, vk_api_version, group_id_vk, author_comment, media_id, owner_id)
