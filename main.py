@@ -69,12 +69,12 @@ def upload_image_in_wall(hash, photo, server, group_id, token, api_version):
     return id_image, owner_id
 
 
-def public_image_wall_vk(token, api_version, from_group, message):
+def public_image_wall_vk(token, api_version, from_group, message, media_id, owner_id):
     params = {
         'access_token': token,
         'v': api_version,
         'owner_id': -int(from_group),
-        # 'attachments': (owner_id, media_id),
+        'attachments': f'photo{owner_id}_{media_id}',
         'message': message
     }
     response = requests.post('https://api.vk.com/method/wall.post',
@@ -103,4 +103,4 @@ if __name__ == '__main__':
     media_id, owner_id = upload_image_in_wall(hash, photo, server, group_id_vk, token_vk, vk_api_version)
     print(media_id, owner_id)
     print(-int(group_id_vk))
-    public_image_wall_vk(token_vk, vk_api_version, group_id_vk, author_comment)
+    public_image_wall_vk(token_vk, vk_api_version, group_id_vk, author_comment, media_id, owner_id)
