@@ -72,7 +72,7 @@ def vk_saving_photo_in_album_group(hash, photo, server, group_id, token, api_ver
     return id_image, owner_id
 
 
-def public_image_wall_vk(token, api_version, from_group, message, media_id, owner_id):
+def vk_public_image_group_wall(token, api_version, from_group, message, media_id, owner_id):
     params = {
         'access_token': token,
         'v': api_version,
@@ -80,10 +80,8 @@ def public_image_wall_vk(token, api_version, from_group, message, media_id, owne
         'attachments': f'photo{owner_id}_{media_id}',
         'message': message
     }
-    response = requests.post('https://api.vk.com/method/wall.post',
-                             params=params)
+    response = requests.post('https://api.vk.com/method/wall.post', params=params)
     response.raise_for_status()
-    response_json = response.json()
 
 
 if __name__ == '__main__':
@@ -107,5 +105,5 @@ if __name__ == '__main__':
     hash, photo, server = vk_uploading_image_to_server(vk_server_address, image_name)
 
     media_id, owner_id = vk_saving_photo_in_album_group(hash, photo, server, vk_group_id, vk_token, vk_api_version)
-    public_image_wall_vk(vk_token, vk_api_version, vk_group_id, author_comment, media_id, owner_id)
+    vk_public_image_group_wall(vk_token, vk_api_version, vk_group_id, author_comment, media_id, owner_id)
     os.remove(f'{image_name}.png')
