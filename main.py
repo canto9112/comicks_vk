@@ -64,8 +64,7 @@ def vk_saving_photo_in_album_group(hash, photo, server, group_id, token, api_ver
         'server': server,
         'hash': hash
     }
-    response = requests.post('https://api.vk.com/method/photos.saveWallPhoto',
-                             params=params)
+    response = requests.post('https://api.vk.com/method/photos.saveWallPhoto', params=params)
     response.raise_for_status()
     response_json = response.json()
     id_image = response_json['response'][0]['id']
@@ -105,7 +104,7 @@ if __name__ == '__main__':
 
     vk_server_address = get_vk_server_address(vk_token, vk_api_version, vk_group_id)
 
-    hash, photo, server = uploading_image_to_server_vk(vk_server_address, image_name)
+    hash, photo, server = vk_uploading_image_to_server(vk_server_address, image_name)
 
     media_id, owner_id = vk_saving_photo_in_album_group(hash, photo, server, vk_group_id, vk_token, vk_api_version)
     public_image_wall_vk(vk_token, vk_api_version, vk_group_id, author_comment, media_id, owner_id)
