@@ -2,7 +2,6 @@ import requests
 from dotenv import load_dotenv
 import os
 import random
-from pprint import pprint
 
 
 def total_number_comics(url):
@@ -101,9 +100,7 @@ if __name__ == '__main__':
     save_image_xkdc(image_link, image_name)
 
     vk_server_address = get_vk_server_address(vk_token, vk_api_version, vk_group_id)
-
     hash, photo, server = vk_uploading_image_to_server(vk_server_address, image_name)
-
     media_id, owner_id = vk_saving_photo_in_album_group(hash, photo, server, vk_group_id, vk_token, vk_api_version)
     vk_public_image_group_wall(vk_token, vk_api_version, vk_group_id, author_comment, media_id, owner_id)
     os.remove(f'{image_name}.png')
