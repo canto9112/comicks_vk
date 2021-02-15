@@ -10,16 +10,15 @@ def total_number_comics(url):
     return response.json()['num']
 
 
-def get_image_link(url):
+def get_image_xkdc(url):
     response = requests.get(url)
     response.raise_for_status()
     response_json = response.json()
 
     image_link = response_json['img']
-    image_num = response_json['num']
+    image_number = response_json['num']
     author_comment = response_json['alt']
-
-    return image_link, image_num, author_comment
+    return image_link, image_number, author_comment
 
 
 def save_image(url, file_name):
@@ -102,9 +101,9 @@ if __name__ == '__main__':
     total_number_comics = total_number_comics(xkdc_last_comics_url)
     random_comics = random.randint(1, total_number_comics)
 
-    xkdc_url = f'http://xkcd.com/{random_comics}/info.0.json'
+    xkdc_random_comics_url = f'http://xkcd.com/{random_comics}/info.0.json'
 
-    image_link, image_name, author_comment = get_image_link(xkdc_url)
+    image_link, image_name, author_comment = get_image_xkdc(xkdc_random_comics_url)
 
     save_image(image_link, image_name)
 
