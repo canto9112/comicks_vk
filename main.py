@@ -2,6 +2,7 @@ import requests
 from dotenv import load_dotenv
 import os
 import random
+from pprint import pprint
 
 
 def total_number_comics(url):
@@ -40,18 +41,18 @@ def get_vk_server_address(token, api_version, group_id):
     return response.json()['response']['upload_url']
 
 
-def upload_image_to_server_vk(url, image_name):
+def uploading_image_to_server_vk(url, image_name):
     with open(f'{image_name}.png', 'rb') as file:
         files = {
             'photo': file
         }
         response = requests.post(url, files=files)
         response.raise_for_status()
-        response_json = response.json()
-        hash = response_json['hash']
-        photo = response_json['photo']
-        server = response_json['server']
-        return hash, photo, server
+        server_response = response.json()
+        hash = server_response['hash']
+        photo = server_response['photo']
+        server = server_response['server']
+    return hash, photo, server
 
 
 def upload_image_in_wall(hash, photo, server, group_id, token, api_version):
@@ -104,7 +105,8 @@ if __name__ == '__main__':
 
     vk_server_address = get_vk_server_address(vk_token, vk_api_version, vk_group_id)
 
-    hash, photo, server = upload_image_to_server_vk(vk_server_address, image_name)
+    hash, photo, server = uploading_image_to_server_vk(vk_server_address, image_name)
+
     media_id, owner_id = upload_image_in_wall(hash, photo, server, vk_group_id, vk_token, vk_api_version)
     public_image_wall_vk(vk_token, vk_api_version, vk_group_id, author_comment, media_id, owner_id)
     os.remove(f'{image_name}.png')
