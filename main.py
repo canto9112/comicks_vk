@@ -21,10 +21,9 @@ def get_image_xkdc(url):
     return image_link, image_number, author_comment
 
 
-def save_image(url, file_name):
+def save_image_xkdc(url, file_name):
     response = requests.get(url)
     response.raise_for_status()
-
     with open(f'{file_name}.png', 'wb') as file:
         file.write(response.content)
 
@@ -100,17 +99,13 @@ if __name__ == '__main__':
 
     total_number_comics = total_number_comics(xkdc_last_comics_url)
     random_comics = random.randint(1, total_number_comics)
-
     xkdc_random_comics_url = f'http://xkcd.com/{random_comics}/info.0.json'
-
     image_link, image_name, author_comment = get_image_xkdc(xkdc_random_comics_url)
 
-    save_image(image_link, image_name)
+    save_image_xkdc(image_link, image_name)
 
     upload_url = get_upload_url(vk_token, vk_api_version, vk_group_id)
-
     hash, photo, server = upload_image_to_server_vk(upload_url, image_name)
     media_id, owner_id = upload_image_in_wall(hash, photo, server, vk_group_id, vk_token, vk_api_version)
-
     public_image_wall_vk(vk_token, vk_api_version, vk_group_id, author_comment, media_id, owner_id)
     os.remove(f'{image_name}.png')
