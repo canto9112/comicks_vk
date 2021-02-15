@@ -37,9 +37,7 @@ def get_vk_server_address(token, api_version, group_id):
     response = requests.get('https://api.vk.com/method/photos.getWallUploadServer',
                             params=params)
     response.raise_for_status()
-    response_json = response.json()
-    upload_url = response_json['response']['upload_url']
-    return upload_url
+    return response.json()['response']['upload_url']
 
 
 def upload_image_to_server_vk(url, image_name):
