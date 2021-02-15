@@ -1,17 +1,13 @@
 import requests
-from pprint import pprint
 from dotenv import load_dotenv
 import os
 import random
 
 
-def get_last_comics(url):
+def total_number_comics(url):
     response = requests.get(url)
     response.raise_for_status()
-    response_json = response.json()
-
-    last_comics_num = response_json['num']
-    return last_comics_num
+    return response.json()['num']
 
 
 def get_image_link(url):
@@ -95,26 +91,26 @@ def public_image_wall_vk(token, api_version, from_group, message, media_id, owne
 
 if __name__ == '__main__':
     load_dotenv()
-    xkdc_last_comics_url = 'http://xkcd.com/info.0.json'
-    api_vk_url = 'https://api.vk.com/method/photos.getWallUploadServer'
 
     vk_api_version = 5.21
-    token_vk = os.getenv('PERSON_TOKEN_VK')
-    user_id_vk = os.getenv('USER_ID_VK')
-    group_id_vk = os.getenv('GROUP_ID_VK')
+    vk_token = os.getenv('VK_PERSON_TOKEN')
+    vk_group_id = os.getenv('VK_GROUP_ID')
 
-    last_comics_num = get_last_comics(xkdc_last_comics_url)
+    xkdc_last_comics_url = 'http://xkcd.com/info.0.json'
+
+    last_comics_num = total_number_comics(xkdc_last_comics_url)
     random_comics = random.randint(1, last_comics_num)
+
     xkdc_url = f'http://xkcd.com/{random_comics}/info.0.json'
 
     image_link, image_name, author_comment = get_image_link(xkdc_url)
-    print(author_comment)
+
     save_image(image_link, image_name)
-    print(image_name)
-    upload_url = get_upload_url(token_vk, vk_api_version, group_id_vk)
+
+    upload_url = get_upload_url(vk_token, vk_api_version, vk_group_id)
 
     hash, photo, server = upload_image_to_server_vk(upload_url, image_name)
-    media_id, owner_id = upload_image_in_wall(hash, photo, server, group_id_vk, token_vk, vk_api_version)
+    media_id, owner_id = upload_image_in_wall(hash, photo, server, vk_group_id, vk_token, vk_api_version)
 
-    public_image_wall_vk(token_vk, vk_api_version, group_id_vk, author_comment, media_id, owner_id)
+    public_image_wall_vk(vk_token, vk_api_version, vk_group_id, author_comment, media_id, owner_id)
     os.remove(f'{image_name}.png')
