@@ -41,7 +41,7 @@ def get_vk_server_address(token, api_version, group_id):
     return response.json()['response']['upload_url']
 
 
-def uploading_image_to_server_vk(url, image_name):
+def vk_uploading_image_to_server(url, image_name):
     with open(f'{image_name}.png', 'rb') as file:
         files = {
             'photo': file
@@ -55,7 +55,7 @@ def uploading_image_to_server_vk(url, image_name):
     return hash, photo, server
 
 
-def upload_image_in_wall(hash, photo, server, group_id, token, api_version):
+def vk_saving_photo_in_album_group(hash, photo, server, group_id, token, api_version):
     params = {
         'access_token': token,
         'v': api_version,
@@ -107,6 +107,6 @@ if __name__ == '__main__':
 
     hash, photo, server = uploading_image_to_server_vk(vk_server_address, image_name)
 
-    media_id, owner_id = upload_image_in_wall(hash, photo, server, vk_group_id, vk_token, vk_api_version)
+    media_id, owner_id = vk_saving_photo_in_album_group(hash, photo, server, vk_group_id, vk_token, vk_api_version)
     public_image_wall_vk(vk_token, vk_api_version, vk_group_id, author_comment, media_id, owner_id)
     os.remove(f'{image_name}.png')
