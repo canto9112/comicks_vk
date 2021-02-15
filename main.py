@@ -14,6 +14,7 @@ def get_image_link(url):
     response = requests.get(url)
     response.raise_for_status()
     response_json = response.json()
+
     image_link = response_json['img']
     image_num = response_json['num']
     author_comment = response_json['alt']
@@ -98,8 +99,8 @@ if __name__ == '__main__':
 
     xkdc_last_comics_url = 'http://xkcd.com/info.0.json'
 
-    last_comics_num = total_number_comics(xkdc_last_comics_url)
-    random_comics = random.randint(1, last_comics_num)
+    total_number_comics = total_number_comics(xkdc_last_comics_url)
+    random_comics = random.randint(1, total_number_comics)
 
     xkdc_url = f'http://xkcd.com/{random_comics}/info.0.json'
 
