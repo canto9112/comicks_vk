@@ -1,88 +1,10 @@
 import os
 import random
 
-import requests
 from dotenv import load_dotenv
 
-
-def get_total_number_comics(url):
-    response = requests.get(url)
-    response.raise_for_status()
-    return response.json()['num']
-
-
-def get_xkdc_image(url):
-    response = requests.get(url)
-    response.raise_for_status()
-    response = response.json()
-
-    image_link = response['img']
-    image_number = response['num']
-    author_comment = response['alt']
-    return image_link, image_number, author_comment
-
-
-def saving_image_xkdc(url, image_name):
-    response = requests.get(url)
-    response.raise_for_status()
-    with open(image_name, 'wb') as file:
-        file.write(response.content)
-
-
-def get_vk_server_address(token, api_version, group_id):
-    params = {
-        'access_token': token,
-        'v': api_version,
-        'group_id': group_id
-    }
-    response = requests.get('https://api.vk.com/method/photos.getWallUploadServer',
-                            params=params)
-    response.raise_for_status()
-    return response.json()['response']['upload_url']
-
-
-def uploading_image_to_server_vk(url, image_name):
-    with open(image_name, 'rb') as file:
-        files = {
-            'photo': file
-        }
-        response = requests.post(url, files=files)
-        response.raise_for_status()
-        server_response = response.json()
-        server_hash = server_response['hash']
-        photo = server_response['photo']
-        server = server_response['server']
-    return server_hash, photo, server
-
-
-def saving_image_in_album_group_vk(server_hash, photo, server, group_id, token, api_version):
-    params = {
-        'access_token': token,
-        'v': api_version,
-        'group_id': group_id,
-        'photo': photo,
-        'server': server,
-        'hash': server_hash
-    }
-    response = requests.post('https://api.vk.com/method/photos.saveWallPhoto', params=params)
-    response.raise_for_status()
-    response = response.json()
-    id_image = response['response'][0]['id']
-    owner_id = response['response'][0]['owner_id']
-    return id_image, owner_id
-
-
-def posting_image_group_wall_vk(token, api_version, from_group, message, media_id, owner_id):
-    params = {
-        'access_token': token,
-        'v': api_version,
-        'owner_id': -int(from_group),
-        'attachments': f'photo{owner_id}_{media_id}',
-        'message': message
-    }
-    response = requests.post('https://api.vk.com/method/wall.post', params=params)
-    response.raise_for_status()
-
+import vk_api
+import xkdc
 
 if __name__ == '__main__':
     load_dotenv()
@@ -93,19 +15,19 @@ if __name__ == '__main__':
 
     xkdc_last_comics_url = 'http://xkcd.com/info.0.json'
 
-    total_number_comics = get_total_number_comics(xkdc_last_comics_url)
+    total_number_comics = xkdc.get_total_number_comics(xkdc_last_comics_url)
     random_comics = random.randint(1, total_number_comics)
     xkdc_random_comics_url = f'http://xkcd.com/{random_comics}/info.0.json'
-    image_link, image_number, author_comment = get_xkdc_image(xkdc_random_comics_url)
+    image_link, image_number, author_comment = xkdc.get_xkdc_image(xkdc_random_comics_url)
     image_name = f'{image_number}.png'
 
     try:
-        saving_image_xkdc(image_link, image_name)
+        xkdc.saving_image_xkdc(image_link, image_name)
     except ValueError:
         os.remove(image_name)
     finally:
-        vk_server_address = get_vk_server_address(vk_token, vk_api_version, vk_group_id)
-        server_hash, photo, server = uploading_image_to_server_vk(vk_server_address, image_name)
-        media_id, owner_id = saving_image_in_album_group_vk(server_hash, photo, server, vk_group_id, vk_token, vk_api_version)
-        posting_image_group_wall_vk(vk_token, vk_api_version, vk_group_id, author_comment, media_id, owner_id)
+        vk_server_address = vk_api.get_server_address(vk_token, vk_api_version, vk_group_id)
+        server_hash, photo, server = vk_api.uploading_image_to_server(vk_server_address, image_name)
+        media_id, owner_id = vk_api.saving_image_in_album_group(server_hash, photo, server, vk_group_id, vk_token, vk_api_version)
+        vk_api.posting_image_group_wall(vk_token, vk_api_version, vk_group_id, author_comment, media_id, owner_id)
         os.remove(image_name)
