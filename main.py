@@ -99,10 +99,13 @@ if __name__ == '__main__':
     image_link, image_number, author_comment = get_xkdc_image(xkdc_random_comics_url)
     image_name = f'{image_number}.png'
 
-    saving_image_xkdc(image_link, image_name)
-
-    vk_server_address = get_vk_server_address(vk_token, vk_api_version, vk_group_id)
-    hash, photo, server = uploading_image_to_server_vk(vk_server_address, image_name)
-    media_id, owner_id = saving_image_in_album_group_vk(hash, photo, server, vk_group_id, vk_token, vk_api_version)
-    posting_image_group_wall_vk(vk_token, vk_api_version, vk_group_id, author_comment, media_id, owner_id)
-    os.remove(image_name)
+    try:
+        saving_image_xkdc(image_link, image_name)
+    except ValueError:
+        os.remove(image_name)
+    finally:
+        vk_server_address = get_vk_server_address(vk_token, vk_api_version, vk_group_id)
+        server_hash, photo, server = uploading_image_to_server_vk(vk_server_address, image_name)
+        media_id, owner_id = saving_image_in_album_group_vk(server_hash, photo, server, vk_group_id, vk_token, vk_api_version)
+        posting_image_group_wall_vk(vk_token, vk_api_version, vk_group_id, author_comment, media_id, owner_id)
+        os.remove(image_name)
