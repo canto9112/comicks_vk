@@ -22,7 +22,7 @@ def get_xkdc_image(url):
     return image_link, image_number, author_comment
 
 
-def xkdc_image_save(url, file_name):
+def saving_image_xkdc(url, file_name):
     response = requests.get(url)
     response.raise_for_status()
     with open(f'{file_name}.png', 'wb') as file:
@@ -41,7 +41,7 @@ def get_vk_server_address(token, api_version, group_id):
     return response.json()['response']['upload_url']
 
 
-def vk_uploading_image_to_server(url, image_name):
+def uploading_image_to_server_vk(url, image_name):
     with open(f'{image_name}.png', 'rb') as file:
         files = {
             'photo': file
@@ -55,7 +55,7 @@ def vk_uploading_image_to_server(url, image_name):
     return hash, photo, server
 
 
-def vk_saving_photo_in_album_group(hash, photo, server, group_id, token, api_version):
+def saving_image_in_album_group_vk(hash, photo, server, group_id, token, api_version):
     params = {
         'access_token': token,
         'v': api_version,
@@ -72,7 +72,7 @@ def vk_saving_photo_in_album_group(hash, photo, server, group_id, token, api_ver
     return id_image, owner_id
 
 
-def vk_public_image_group_wall(token, api_version, from_group, message, media_id, owner_id):
+def posting_image_group_wall_vk(token, api_version, from_group, message, media_id, owner_id):
     params = {
         'access_token': token,
         'v': api_version,
@@ -98,10 +98,10 @@ if __name__ == '__main__':
     xkdc_random_comics_url = f'http://xkcd.com/{random_comics}/info.0.json'
     image_link, image_name, author_comment = get_xkdc_image(xkdc_random_comics_url)
 
-    xkdc_image_save(image_link, image_name)
+    saving_image_xkdc(image_link, image_name)
 
     vk_server_address = get_vk_server_address(vk_token, vk_api_version, vk_group_id)
-    hash, photo, server = vk_uploading_image_to_server(vk_server_address, image_name)
-    media_id, owner_id = vk_saving_photo_in_album_group(hash, photo, server, vk_group_id, vk_token, vk_api_version)
-    vk_public_image_group_wall(vk_token, vk_api_version, vk_group_id, author_comment, media_id, owner_id)
+    hash, photo, server = uploading_image_to_server_vk(vk_server_address, image_name)
+    media_id, owner_id = saving_image_in_album_group_vk(hash, photo, server, vk_group_id, vk_token, vk_api_version)
+    posting_image_group_wall_vk(vk_token, vk_api_version, vk_group_id, author_comment, media_id, owner_id)
     os.remove(f'{image_name}.png')
