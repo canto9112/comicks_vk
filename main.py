@@ -66,9 +66,9 @@ def saving_image_in_album_group_vk(hash, photo, server, group_id, token, api_ver
     }
     response = requests.post('https://api.vk.com/method/photos.saveWallPhoto', params=params)
     response.raise_for_status()
-    response_json = response.json()
-    id_image = response_json['response'][0]['id']
-    owner_id = response_json['response'][0]['owner_id']
+    response = response.json()
+    id_image = response['response'][0]['id']
+    owner_id = response['response'][0]['owner_id']
     return id_image, owner_id
 
 
