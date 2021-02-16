@@ -49,20 +49,20 @@ def uploading_image_to_server_vk(url, image_name):
         response = requests.post(url, files=files)
         response.raise_for_status()
         server_response = response.json()
-        hash = server_response['hash']
+        server_hash = server_response['hash']
         photo = server_response['photo']
         server = server_response['server']
-    return hash, photo, server
+    return server_hash, photo, server
 
 
-def saving_image_in_album_group_vk(hash, photo, server, group_id, token, api_version):
+def saving_image_in_album_group_vk(server_hash, photo, server, group_id, token, api_version):
     params = {
         'access_token': token,
         'v': api_version,
         'group_id': group_id,
         'photo': photo,
         'server': server,
-        'hash': hash
+        'hash': server_hash
     }
     response = requests.post('https://api.vk.com/method/photos.saveWallPhoto', params=params)
     response.raise_for_status()
