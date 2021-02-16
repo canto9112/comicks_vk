@@ -14,11 +14,11 @@ def get_total_number_comics(url):
 def get_xkdc_image(url):
     response = requests.get(url)
     response.raise_for_status()
-    response_json = response.json()
+    response = response.json()
 
-    image_link = response_json['img']
-    image_number = response_json['num']
-    author_comment = response_json['alt']
+    image_link = response['img']
+    image_number = response['num']
+    author_comment = response['alt']
     return image_link, image_number, author_comment
 
 
