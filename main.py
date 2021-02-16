@@ -11,7 +11,7 @@ def total_number_comics(url):
     return response.json()['num']
 
 
-def get_image_xkdc(url):
+def get_xkdc_image(url):
     response = requests.get(url)
     response.raise_for_status()
     response_json = response.json()
@@ -22,7 +22,7 @@ def get_image_xkdc(url):
     return image_link, image_number, author_comment
 
 
-def save_image_xkdc(url, file_name):
+def xkdc_image_save(url, file_name):
     response = requests.get(url)
     response.raise_for_status()
     with open(f'{file_name}.png', 'wb') as file:
@@ -96,9 +96,9 @@ if __name__ == '__main__':
     total_number_comics = total_number_comics(xkdc_last_comics_url)
     random_comics = random.randint(1, total_number_comics)
     xkdc_random_comics_url = f'http://xkcd.com/{random_comics}/info.0.json'
-    image_link, image_name, author_comment = get_image_xkdc(xkdc_random_comics_url)
+    image_link, image_name, author_comment = get_xkdc_image(xkdc_random_comics_url)
 
-    save_image_xkdc(image_link, image_name)
+    xkdc_image_save(image_link, image_name)
 
     vk_server_address = get_vk_server_address(vk_token, vk_api_version, vk_group_id)
     hash, photo, server = vk_uploading_image_to_server(vk_server_address, image_name)
