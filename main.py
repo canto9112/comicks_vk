@@ -5,7 +5,7 @@ import requests
 from dotenv import load_dotenv
 
 
-def total_number_comics(url):
+def get_total_number_comics(url):
     response = requests.get(url)
     response.raise_for_status()
     return response.json()['num']
@@ -93,7 +93,7 @@ if __name__ == '__main__':
 
     xkdc_last_comics_url = 'http://xkcd.com/info.0.json'
 
-    total_number_comics = total_number_comics(xkdc_last_comics_url)
+    total_number_comics = get_total_number_comics(xkdc_last_comics_url)
     random_comics = random.randint(1, total_number_comics)
     xkdc_random_comics_url = f'http://xkcd.com/{random_comics}/info.0.json'
     image_link, image_name, author_comment = get_xkdc_image(xkdc_random_comics_url)
