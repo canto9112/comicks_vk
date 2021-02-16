@@ -1,6 +1,12 @@
 import requests
 
 
+def check_error(response):
+    if response.get('error'):
+        error_message = response['error']['error_msg']
+        raise requests.HTTPError(error_message)
+
+
 def get_server_address(token, api_version, group_id):
     params = {
         'access_token': token,
@@ -9,8 +15,9 @@ def get_server_address(token, api_version, group_id):
     }
     response = requests.get('https://api.vk.com/method/photos.getWallUploadServer',
                             params=params)
-    response.raise_for_status()
-    return response.json()['response']['upload_url']
+    response = response.json()
+    check_error(response)
+    return response['response']['upload_url']
 
 
 def upload_image_to_server(url, image_name):
@@ -19,8 +26,8 @@ def upload_image_to_server(url, image_name):
             'photo': file
         }
         response = requests.post(url, files=files)
-        response.raise_for_status()
         server_response = response.json()
+        check_error(server_response)
         server_hash = server_response['hash']
         photo = server_response['photo']
         server = server_response['server']
@@ -37,8 +44,8 @@ def save_image_in_group_album(server_hash, photo, server, group_id, token, api_v
         'hash': server_hash
     }
     response = requests.post('https://api.vk.com/method/photos.saveWallPhoto', params=params)
-    response.raise_for_status()
     response = response.json()
+    check_error(response)
     id_image = response['response'][0]['id']
     owner_id = response['response'][0]['owner_id']
     return id_image, owner_id
@@ -53,7 +60,8 @@ def post_image_group_wall(token, api_version, from_group, message, media_id, own
         'message': message
     }
     response = requests.post('https://api.vk.com/method/wall.post', params=params)
-    response.raise_for_status()
+    response = response.json()
+    check_error(response)
 
 
 def post_comics(image_name, author_comment, api_version, token, group_id):
