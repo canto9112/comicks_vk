@@ -1,7 +1,8 @@
-import requests
-from dotenv import load_dotenv
 import os
 import random
+
+import requests
+from dotenv import load_dotenv
 
 
 def total_number_comics(url):
