@@ -22,10 +22,10 @@ def get_xkdc_image(url):
     return image_link, image_number, author_comment
 
 
-def saving_image_xkdc(url, file_name):
+def saving_image_xkdc(url, image_name):
     response = requests.get(url)
     response.raise_for_status()
-    with open(f'{file_name}.png', 'wb') as file:
+    with open(image_name, 'wb') as file:
         file.write(response.content)
 
 
@@ -42,7 +42,7 @@ def get_vk_server_address(token, api_version, group_id):
 
 
 def uploading_image_to_server_vk(url, image_name):
-    with open(f'{image_name}.png', 'rb') as file:
+    with open(image_name, 'rb') as file:
         files = {
             'photo': file
         }
@@ -96,7 +96,8 @@ if __name__ == '__main__':
     total_number_comics = get_total_number_comics(xkdc_last_comics_url)
     random_comics = random.randint(1, total_number_comics)
     xkdc_random_comics_url = f'http://xkcd.com/{random_comics}/info.0.json'
-    image_link, image_name, author_comment = get_xkdc_image(xkdc_random_comics_url)
+    image_link, image_number, author_comment = get_xkdc_image(xkdc_random_comics_url)
+    image_name = f'{image_number}.png'
 
     saving_image_xkdc(image_link, image_name)
 
@@ -104,4 +105,4 @@ if __name__ == '__main__':
     hash, photo, server = uploading_image_to_server_vk(vk_server_address, image_name)
     media_id, owner_id = saving_image_in_album_group_vk(hash, photo, server, vk_group_id, vk_token, vk_api_version)
     posting_image_group_wall_vk(vk_token, vk_api_version, vk_group_id, author_comment, media_id, owner_id)
-    os.remove(f'{image_name}.png')
+    os.remove(image_name)
