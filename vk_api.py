@@ -51,7 +51,7 @@ def save_image_in_group_album(server_hash, photo, server, group_id, token, api_v
     return id_image, owner_id
 
 
-def post_image_group_wall(token, api_version, from_group, message, media_id, owner_id):
+def post_image_on_group_wall(token, api_version, from_group, message, media_id, owner_id):
     params = {
         'access_token': token,
         'v': api_version,
@@ -68,4 +68,4 @@ def post_comics(image_name, author_comment, api_version, token, group_id):
     vk_server_address = get_server_address(token, api_version, group_id)
     server_hash, photo, server = upload_image_to_server(vk_server_address, image_name)
     media_id, owner_id = save_image_in_group_album(server_hash, photo, server, group_id, token, api_version)
-    post_image_group_wall(token, api_version, group_id, author_comment, media_id, owner_id)
+    post_image_on_group_wall(token, api_version, group_id, author_comment, media_id, owner_id)

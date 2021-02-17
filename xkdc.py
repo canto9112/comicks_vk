@@ -3,7 +3,7 @@ import random
 import requests
 
 
-def get_total_number_comics(url):
+def get_comics_total_number(url):
     response = requests.get(url)
     response.raise_for_status()
     return response.json()['num']
@@ -29,7 +29,7 @@ def save_image(url, image_name):
 
 def save_random_comics():
     xkdc_last_comics_url = 'http://xkcd.com/info.0.json'
-    total_number_comics = get_total_number_comics(xkdc_last_comics_url)
+    total_number_comics = get_comics_total_number(xkdc_last_comics_url)
     random_comics = random.randint(1, total_number_comics)
     xkdc_random_comics_url = f'http://xkcd.com/{random_comics}/info.0.json'
     image_link, image_number, author_comment = get_image(xkdc_random_comics_url)
